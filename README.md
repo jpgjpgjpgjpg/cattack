@@ -10,15 +10,16 @@ Com esse conjunto de funcionalidades, o código é útil para testar e analisar 
 
 O código também inclui uma função para ofuscar o IP ao fazer requisições usando proxies, o que pode ser útil para evitar bloqueios ou monitoramento.
 
-SCREENSHOTS
+#SCREENSHOTS
+
 ![image](https://github.com/jpgjpgjpgjpg/cattack/assets/163206473/206b8e1c-af30-4412-987e-ef75a2926fa3)
 
 ![cattack](https://github.com/jpgjpgjpgjpg/cattack/assets/163206473/82d71225-dc51-49ca-b8c5-3776d6637b06)
 
-Como instalar:
+#COMO INSTALAR
 
-git clone https://github.com/jpgjpgjpgjpg/cattack
+`git clone https://github.com/jpgjpgjpgjpg/cattack`
 
-Como usar:
+#COMO USAR
 
-python3 cattack.py
+`python3 cattack.py`
