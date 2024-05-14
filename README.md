@@ -16,8 +16,13 @@ O código também inclui uma função para ofuscar o IP ao fazer requisições u
 
 # COMO INSTALAR
 
+Instale a versão mais recente do webdriver neste link:
+https://googlechromelabs.github.io/chrome-for-testing/
+
+`pip install webdriver_manager`
+
 `git clone https://github.com/jpgjpgjpgjpg/cattack`
 
 # COMO USAR
-
+Para iniciar a ferramenta utilize o python3:
 `python3 cattack.py`
