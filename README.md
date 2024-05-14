@@ -17,9 +17,10 @@ O código também inclui uma função para ofuscar o IP ao fazer requisições u
 # COMO INSTALAR
 
 Instale a versão mais recente do webdriver neste link:
-https://googlechromelabs.github.io/chrome-for-testing/
+`https://googlechromelabs.github.io/chrome-for-testing/`
 
-`pip install webdriver_manager`
+Instale os requerimentos para a ferramenta:
+`pip install -r requirements.txt`
 
 `git clone https://github.com/jpgjpgjpgjpg/cattack`
 
