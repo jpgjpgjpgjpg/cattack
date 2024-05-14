@@ -12,7 +12,7 @@ O código também inclui uma função para ofuscar o IP ao fazer requisições u
 
 # SCREENSHOTS
 
-![image](https://github.com/jpgjpgjpgjpg/cattack/assets/163206473/206b8e1c-af30-4412-987e-ef75a2926fa3)
+![image](https://github.com/jpgjpgjpgjpg/cattack/assets/163206473/48ba4d23-f6ab-4045-8a8c-0150364e0c9d)
 
 # COMO INSTALAR
 
