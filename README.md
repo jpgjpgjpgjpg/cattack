@@ -1,4 +1,5 @@
 # CATATTACK
+Ainda em desenvolvimento e contém alguns erros conhecidos.
 
 Este código usa Selenium para automatizar a interação com um navegador, permitindo abrir páginas da web e analisá-las. O BeautifulSoup auxilia nessa análise, extraindo elementos como inputs e botões do conteúdo HTML.
 
