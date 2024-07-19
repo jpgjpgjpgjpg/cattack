@@ -1,5 +1,9 @@
 # CATTACK
 Ainda em desenvolvimento e contém alguns erros conhecidos.
 
-Para conseguir utilizar a ferramenta, utilize:
-```bash setup.sh```
+## Como usar o script de instalação
+
+Para configurar o ambiente e instalar todas as dependências necessárias, execute o seguinte comando no terminal:
+
+```bash
+./setup.sh
